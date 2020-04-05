@@ -97,6 +97,15 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
         debiased_errors0 = R1$debiased_errors0
         debiased_errors = R1$debiased_errors
         worsen = R1$worsen
+        
+        # wei edits to attach variable names to worsen
+        
+        worsen <- worse[!sapply(worsen, is.null)]
+        
+        if( !is.null(nams) ) names(worsen) <- nams[S]
+        
+        # end of wei edits
+        
         if(trace){
             print(paste(nams[S],":", p_value))
         }
