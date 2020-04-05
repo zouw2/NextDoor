@@ -93,6 +93,9 @@ trace = T){
         sigmaSVD = svd(sigmaHat)
         sigmaLeft[[j]] = sigmaSVD[[2]]%*%diag(sqrt(sigmaSVD[[1]]))
     }
+    
+    names(random_estimates) <- nams[S] # Wei added to better index worsen stat
+                                                    
     p_value = NULL
     if(pv){
         p_value = nextdoor_unconditional_test (errors0 = errors0, errors = errors, S = S, nams = nams,
