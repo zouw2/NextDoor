@@ -100,7 +100,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
         
         # wei edits to attach variable names to worsen
         
-        worsen <- worse[!sapply(worsen, is.null)]
+        worsen <- worsen[!sapply(worsen, is.null)]
         
         if( !is.null(nams) ) names(worsen) <- nams[S]
         
