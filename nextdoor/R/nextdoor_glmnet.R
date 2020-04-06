@@ -9,7 +9,8 @@
 #' @param standardize Whether to standardize the data, standardize = T by default. It should be consistent with cv_glm.
 #' @param K number of repetitions estimating the de-biased error.
 #' @param B number of bootstrap repetitions estimating the p-value.
-#' @param alpha added errors' level with added errors being covariance structure*alpha. By default, alpha = .1.
+#' @param alpha added errors' level with added errors being covariance structure*alpha. By default, alpha = .1. Note: this is not the alpha that mixes lasso and ridge regression
+#' @param glmnet_alpha =1 this is  the alpha that mixes lasso and ridge regression
 #' @param epsilon added errors' level  with added errors being identity*min(covariance diagonal)\*epsilon. By default, epsilon = 0.05^2.
 #' @param epsilon2 added errors' level in the Bootstrap with  added errors being min(covariance diagonal)*epsilon2.
 #'        By default, epsilon2 = 0.05^2
@@ -50,7 +51,7 @@
 #' print(R1, digits =3)
 #' @export
 nextdoor.glmnet <- function(x, y, cv_glm, nams = NULL, family = "gaussian",  lossfun = NULL, standardize = T,
-K = 100, B = 1000, alpha = 0.1, epsilon = 0.05^2, epsilon2 =0.05^2,
+K = 100, B = 1000, alpha = 0.1,  glmnet_alpha = 1, epsilon = 0.05^2, epsilon2 =0.05^2,
 selectionType = 0, Bindex = NULL, pv = TRUE,  rescale = TRUE,
 score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
     n = length(y); p = ncol(x);lambda = cv_glm$lambda; foldid = cv_glm$foldid; ypred = cv_glm$fit.preval[,1:length(lambda)]
@@ -77,7 +78,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
         model_score = model_score))
     }else{
         for(s in S){
-            Rs = train_model(x = x[,-s], y = y, family=family, foldid = foldid, lambda = lambda,lambda_extra = lambda_extra, lossfun = lossfun)
+            Rs = train_model(x = x[,-s], y = y, family=family, foldid = foldid, lambda = lambda,lambda_extra = lambda_extra, lossfun = lossfun, glmnet_alpha=glmnet_alpha)
             errors[[s]] = Rs$errors0
             if(ncol(errors[[s]]) > ncol(errors0)){
                 errors[[s]] = errors[[s]][,1:ncol(errors0)]
