@@ -12,8 +12,8 @@
 #' @return model: model sequence trained using cv.glmnet.
 #' @return errors0: cross-validation error curves.
 train_model<-function(x, y, family=c("gaussian","binomial","poisson","multinomial"), foldid =NULL, lambda = NULL, lambda_extra = NULL, 
-                      lossfun = NULL, standardize = FALSE){
-    cv_glm = cv.glmnet(x, y, family = family, lambda = lambda_extra, foldid = foldid, standardize = standardize,keep = TRUE)
+                      lossfun = NULL, standardize = T, glmnet_alpha=1){
+    cv_glm = cv.glmnet(x, y, family = family, lambda = lambda_extra, foldid = foldid, standardize = standardize,keep = TRUE, alpha=glmnet_alpha)
     foldid = cv_glm$foldid
     ypred = cv_glm$fit.preval[,1:length(lambda)]
     if(is.null(lossfun)){
