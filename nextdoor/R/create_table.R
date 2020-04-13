@@ -68,7 +68,7 @@ pvalue, selection_frequency, model_score){
         col_id = col_id+1
     }
     ll= order(-results[length(features)+2,-1])
-    results[,-1] = results[,-1][,ll]
+    results[,-1] = results[,-1, drop =F][,ll]
     colnames(results)[-1] = colnames(results)[-1][ll]
     results[1:length(S),] = results[ll,]
     rownames(results)[1:length(S)] = rownames(results)[1:length(S)][ll]
