@@ -5,7 +5,7 @@
 #' @param y observations
 #' @param family model family
 #' @param model0 trained model
-deviances <- function(ypred, y, family, model0){
+deviances <- function(ypred, y, family, model0, weights=NULL){
     if(family == "gaussian"){
         errors = (ypred-y)^2
     }else if (family == "binomial"){
@@ -29,5 +29,14 @@ deviances <- function(ypred, y, family, model0){
     }else{
         stop("model familly not supported!")
     }
-    return(errors)
+    if(is.null(weights) || family %in% 'cox'){ # deviance function for cox will handle weights
+     return(errors)
+    }else{
+        stopifnot(is.vector(weights))
+        stopifnot(length(weights) == length(errors))
+        weights= length(weights) * weights/sum(weights)
+        weights = as.double(weights)
+        errors = errors * weights 
+        
+    }
 }
