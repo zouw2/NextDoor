@@ -70,7 +70,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     model0 = cv_glm
     models = list(); errors = list()
     deBias_error0 = NULL; deBias_errors = NULL
-    p_value = NULL; model_score = NULL; selection_frequency = NULL; worsen = NULL; result_table = NULL
+    p_value = NULL; model_score = NULL; selection_frequency = NULL; worsen = NULL 
     if(is.null(S)){
         return(list(model0 = model0, models = models, index = index0, S = S,
         deBias_error0 = deBias_error0, deBias_errors = deBias_errors,
@@ -133,7 +133,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
             selection_frequency = counts
             model_score = p_value/selection_frequency
         }
-        if( result_table) result_table <- create_table(model0 = model0, models = models, nams = nams,
+        if( result_table ) result_table <- create_table(model0 = model0, models = models, nams = nams,
         errors0 = errors0, errors = errors,
         debiased_errors0 = debiased_errors0,
         debiased_errors = debiased_errors,
