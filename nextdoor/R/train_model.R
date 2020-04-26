@@ -11,7 +11,7 @@
 #'        with Y_pred being the predicted values using the link function. If lossfun == NULL, by default, we use the deviance
 #' @return model: model sequence trained using cv.glmnet.
 #' @return errors0: cross-validation error curves.
-train_model<-function(x, y, family=c("gaussian","binomial","poisson","multinomial"), foldid =NULL, lambda = NULL, lambda_extra = NULL, 
+train_model<-function(x, y, family= "gaussian" , foldid =NULL, lambda = NULL, lambda_extra = NULL, 
                       lossfun = NULL, standardize = T, glmnet_alpha=1, glmnet_weights = NULL){
     cv_glm = cv.glmnet(x, y, family = family, lambda = lambda_extra, foldid = foldid, standardize = standardize,keep = TRUE, alpha=glmnet_alpha, weights = glmnet_weights)
     foldid = cv_glm$foldid
