@@ -59,7 +59,7 @@ pvalue, selection_frequency, model_score){
     col_id = 1
     for(j in S){
         coefj = rep(0, p)
-        coefj[-j] = coef(models[[j]], s = model0$lambda[index])[-1,1]
+        coefj[-j] = coef(models[[j]], s = model0$lambda[index])[-1,1] #why do we remove the first row?
         for(jj in 1:length(features)){
             if(coefj[features[jj]] != 0){
                 results[jj,col_id+1] = coefj[features[jj]]

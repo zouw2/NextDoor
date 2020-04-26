@@ -53,7 +53,7 @@
 nextdoor.glmnet <- function(x, y, cv_glm, nams = NULL, family = "gaussian",  lossfun = NULL, standardize = T,
 K = 100, B = 1000, alpha = 0.1,  glmnet_alpha = 1, glmnet_weights=NULL, epsilon = 0.05^2, epsilon2 =0.05^2,
 selectionType = 0, Bindex = NULL, pv = TRUE,  rescale = TRUE,
-score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
+score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     n = length(y); p = ncol(x);lambda = cv_glm$lambda; foldid = cv_glm$foldid; ypred = cv_glm$fit.preval[,1:length(lambda)]
     if(is.null(lossfun)){
       errors0 = apply(ypred, 2, deviances, y = y, family = family, model0 = cv_glm, weights=glmnet_weights)
@@ -61,7 +61,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
       errors0 = apply(ypred, 2, lossfun, y = y)
     }
     if(is.null(nams)){
-      nams = as.character(rep(1,p))
+      nams = paste('X',as.character(1:p), sep='')
     }
     index0 = getIndex(errors0 = errors0,cv_glm = cv_glm,alpha = alpha, epsilon =epsilon, selectionType = selectionType)
     S = unlist(predict(cv_glm, s = lambda[index0], type = "n"))
@@ -133,7 +133,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE){
             selection_frequency = counts
             model_score = p_value/selection_frequency
         }
-        result_table <- create_table(model0 = model0, models = models, nams = nams,
+        if( result_table) result_table <- create_table(model0 = model0, models = models, nams = nams,
         errors0 = errors0, errors = errors,
         debiased_errors0 = debiased_errors0,
         debiased_errors = debiased_errors,
