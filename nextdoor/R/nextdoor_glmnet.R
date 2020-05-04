@@ -62,7 +62,14 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     }
     
     stopifnot(is.matrix(errors0))
-    errors0 <- errors0[, !is.na(colMeans(errors0))] # for cox likelihood, the extreme linear predictor may overflow after exp(), and the errors/likelihood becomes inf. This step removes such entries
+    
+    selLambda <- !is.nan(colSums(errors0))
+    
+    if(sum(selLambda) < 3) stop( paste('the following lambda', paste(lambda[selLambda], collapse = ','),'from the default lambda sequence give finite LogLike values; please rerun lasso.r with a sequence of larger lambda values'))
+    
+    errors0 <- errors0[, selLambda, drop=F] # for cox likelihood, the extreme linear predictor may overflow after exp(), and the errors/likelihood becomes inf. This step removes such entries
+    lambda <- lambda[selLambda]
+    
     
     if(is.null(nams)){
       nams = paste('X',as.character(1:p), sep='')
@@ -83,7 +90,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     }else{
         for(s in S){
             Rs = train_model(x = x[,-s], y = y, family=family, foldid = foldid, lambda = lambda,lambda_extra = lambda_extra, lossfun = lossfun, glmnet_alpha=glmnet_alpha, glmnet_weights=glmnet_weights)
-            errors[[s]] = Rs$errors0
+            errors[[s]] = fillNanWithPrevCol(Rs$errors0)
             if(ncol(errors[[s]]) > ncol(errors0)){
                 errors[[s]] = errors[[s]][,1:ncol(errors0)]
             }else if(ncol(errors[[s]]) < ncol(errors0)){
@@ -155,5 +162,19 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
         
         return(return_obj)
     }
+}
+
+fillNanWithPrevCol <- function(x){
+  sel <- which(is.na(colSums(x)))
+  if(length(sel) == 0) return(x)
+  print( paste('nextdoor::train_model gives', length(sel), 'columns with a Inf loglik, which is replaced with those loglik from the immediate previous larger lambda in the lambda sequence'))
+  stopifnot(! (1 %in% sel)) # the first column should be normal
+  
+  for (i in sort(sel)){
+    x[, i] <- x[, i-1] # replace the loglik with the one from the previous/larger lambda
+  }
+  
+  x
+  
 }
 
