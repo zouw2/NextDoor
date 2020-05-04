@@ -56,6 +56,12 @@ logpl1 <- function(pred, surv.time, surv.event) {
     r <- rank(surv.time)
     ita <- pred
     epita <- exp(ita)
+    if(F && any(!is.infinite(epita))) { # we can check this here, but let's keep it silent and remove such values in nextdoor_glmnet.R
+        print('certain extreme linear predictors')
+        print(paste(tail(sort(epita)), collapse = ','))
+        print(paste(head(sort(epita)), collapse = ','))
+        stop('error in evaluating deviance')
+    }
     d <- rep(0, n)
     dono <- rep(0, n)
     # for(i in 1:n) {

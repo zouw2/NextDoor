@@ -60,6 +60,10 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     }else{
       errors0 = apply(ypred, 2, lossfun, y = y)
     }
+    
+    stopifnot(is.matrix(errors0))
+    errors0 <- errors0[, !is.na(colMeans(errors0))] # for cox likelihood, the extreme linear predictor may overflow after exp(), and the errors/likelihood becomes inf. This step removes such entries
+    
     if(is.null(nams)){
       nams = paste('X',as.character(1:p), sep='')
     }
