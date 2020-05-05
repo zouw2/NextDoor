@@ -15,7 +15,8 @@ train_model<-function(x, y, family= "gaussian" , foldid =NULL, lambda = NULL, la
                       lossfun = NULL, standardize = T, glmnet_alpha=1, glmnet_weights = NULL){
     cv_glm = cv.glmnet(x, y, family = family, lambda = lambda_extra, foldid = foldid, standardize = standardize,keep = TRUE, alpha=glmnet_alpha, weights = glmnet_weights)
     foldid = cv_glm$foldid
-    ypred = cv_glm$fit.preval[,1:length(lambda)]
+    ypred = cv_glm$fit.preval
+    if( length(lambda) < ncol(ypred) ) ypred = ypred[, 1:length(lambda)]
     if(is.null(lossfun)){
         errors0 = apply(ypred, 2, deviances, y = y, family = family, model0 = cv_glm, weights=glmnet_weights)
     }else{
