@@ -63,7 +63,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
     
     stopifnot(is.matrix(errors0))
     
-    selLambda <- !is.nan(colSums(errors0))
+    selLambda <- apply(errors0, 2, function(x){ !any( is.infinite(x) | is.na(x) | is.nan(x) ) })
     
     if(sum(selLambda) < 3) stop( paste('the following lambda', paste(lambda[selLambda], collapse = ','),'from the default lambda sequence give finite LogLike values; please rerun lasso.r with a sequence of larger lambda values'))
     
@@ -165,7 +165,8 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
 }
 
 fillNanWithPrevCol <- function(x){
-  sel <- which(is.na(colSums(x)))
+  sel <- which( apply(x, 2, function(x1){ any( is.infinite(x1) | is.na(x1) | is.nan(x1) ) }) )
+
   if(length(sel) == 0) return(x)
   print( paste('nextdoor::train_model gives', length(sel), 'columns with a Inf loglik, which is replaced with those loglik from the immediate previous larger lambda in the lambda sequence'))
   stopifnot(! (1 %in% sel)) # the first column should be normal
