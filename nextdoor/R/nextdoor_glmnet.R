@@ -53,7 +53,7 @@
 nextdoor.glmnet <- function(x, y, cv_glm, nams = NULL, family = "gaussian",  lossfun = NULL, standardize = T,
 K = 100, B = 1000, alpha = 0.1,  glmnet_alpha = 1, glmnet_weights=NULL, epsilon = 0.05^2, epsilon2 =0.05^2,
 selectionType = 0, Bindex = NULL, pv = TRUE,  rescale = TRUE,
-score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
+score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F, sumLambda=NA){
     n = length(y); p = ncol(x);lambda = cv_glm$lambda; foldid = cv_glm$foldid; ypred = cv_glm$fit.preval[,1:length(lambda)]
     if(is.null(lossfun)){
       errors0 = apply(ypred, 2, deviances, y = y, family = family, model0 = cv_glm, weights=glmnet_weights)
@@ -75,7 +75,7 @@ score = TRUE, B1 = 50, Bindex1 = NULL,trace = TRUE, result_table=F){
       nams = paste('X',as.character(1:p), sep='')
     }
     index0 = getIndex(errors0 = errors0,cv_glm = cv_glm,alpha = alpha, epsilon =epsilon, selectionType = selectionType)
-    S = unlist(predict(cv_glm, s = lambda[index0], type = "n"))
+    S = unlist(predict(cv_glm, s = ifelse(is.na(sumLambda), lambda[index0], sumLambda), type = "n"))
     one_sds = cv_glm$cvsd
     lambda_extra = c(lambda, min(lambda)/2)
     model0 = cv_glm
